@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Calculadora de Frete - Uninassau</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="box">
+    <h2>Calcular Frete (Uber Moto)</h2>
+    <p>Calcule o valor da entrega a partir da Uninassau</p>
+
+    <label>Digite seu CEP:</label><br>
+    <input type="text" id="cep" placeholder="00000000" maxlength="8">
+    <button onclick="buscarCep()">Calcular</button>
+
+    <div id="resultado" class="resultado" style="display: none;">
+      <p><strong>Rua:</strong> <span id="rua"></span></p>
+      <p><strong>Bairro:</strong> <span id="bairro"></span></p>
+      <p><strong>Cidade:</strong> <span id="cidade"></span></p>
+      <hr>
+      <p><strong>Distância est.:</strong> <span id="distancia"></span> km</p>
+      <p class="preco"><strong>Valor Uber Moto:</strong> R$ <span id="preco"></span></p>
+    </div>
+  </div>
+
+  <script>
+    function buscarCep() {
+      var cep = document.getElementById('cep').value;
+
+      if (cep.length !== 8) {
+        alert('Digite um CEP válido com 8 números!');
+        return;
+      }
+
+      // Consulta a API do ViaCEP
+      fetch('https://viacep.com.br/ws/' + cep + '/json/')
+        .then(function(response) {
+          return response.json();
+        })
+        .then(function(dados) {
+          if (dados.erro) {
+            alert('CEP não encontrado!');
+            return;
+          }
+
+          // Exibe os dados do endereço
+          document.getElementById('rua').innerText = dados.logradouro;
+          document.getElementById('bairro').innerText = dados.bairro;
+          document.getElementById('cidade').innerText = dados.localidade;
+
+          // Simulação de cálculo simples de distância (entre 2 e 12 km)
+          var km = (Math.random() * 10 + 2).toFixed(1);
+          
+          // Cálculo simulado Uber Moto: R$ 4,00 (taxa fixa) + R$ 1,50 por km
+          var valorTotal = (4.00 + (km * 1.50)).toFixed(2);
+
+          document.getElementById('distancia').innerText = km;
+          document.getElementById('preco').innerText = valorTotal.replace('.', ',');
+
+          // Mostra a caixa de resultado
+          document.getElementById('resultado').style.display = 'block';
+        })
+        .catch(function(erro) {
+          alert('Erro ao buscar o CEP.');
+        });
+    }
+  </script>
+
+</body>
+</html>
